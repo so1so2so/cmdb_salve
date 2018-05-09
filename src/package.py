@@ -4,26 +4,30 @@
 # from .plugins.mem import MemPlugin
 # from .plugins.nic import NicPlugin
 from conf import settings
+import src.plugins.mem
+
 
 def pack():
-    # obj1 = DiskPlugin()
-    # disk_info = obj1.execute()
-    #
-    # obj2 = MemPlugin()
-    # mem_info = obj2.execute()
-    #
-    # obj3 = NicPlugin()
-    # nic_info = obj3.execute()
-    # response = {
-    #     'nic': nic_info,
-    #     'mem': mem_info,
-    #     'disk': disk_info
-    # }
     response = {}
 
-    for k,v in settings.PLUGINS.items():
+    for k, v in settings.PLUGINS.items():
         # v = 'src.plugins.disk.DiskPlugin'
         # 反射
-        response[k] = v().execute()
-
+        print  v
+        # v=src.plugins.disk.DiskPlugin
+        import importlib
+        m_path, class_name = v.rsplit('.',1)
+        # m=importlib.import_module('src.plugins.disk')
+        m = importlib.import_module(m_path)
+        # m2=__import__('src.plugins.disk')
+        # print m2
+        cls = getattr(m, class_name)
+        # cls=getattr(m,'DiskPlugin')
+        # cls2=getattr(m2,'DiskPlugin')
+        # print cls
+        response[k] = cls().execute()
+    # print response
     return response
+
+
+pack()
